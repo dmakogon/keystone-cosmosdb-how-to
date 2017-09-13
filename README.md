@@ -45,13 +45,10 @@ This quickstart uses git integration when publishing to Azure. If you'll only be
 
 TODO:
 
- - Install generator-keystone
- - Install Yeoman
- - Generate CMS
  - Modify gallery (fix sort bug)
  - Point MongoDB connection to Cosmos DB emulator
  
- ### generator-keystone
+ ### Install keystone.js generator
 
  When creating a Keystone.js CMS, you get to choose which components will be included (blog, gallery, contact form), what templating style to use (Handlebars, etc.), and a photo-hosting account. A separate project, `generator-keystone`, contains the instructions for creating your customized Keystone CMS.
 
@@ -61,7 +58,7 @@ TODO:
 npm install -g generator-keystone
 ```
 
-### yeoman
+### Install yeoman
 
 `Yeoman` is the tool which executes the instructions found in `generator-keystone`. To install `yeoman`, execute the following `npm` command:
 
@@ -71,7 +68,7 @@ npm install -g generator-keystone
 
 ### Generate your Keystone.js CMS
 
-Now comes the fun part: creating your CMS. Navigate to a directory where you'd like to place your Keystone.js deployment, and run the following `yeoman` command:
+Now comes the fun part: creating your CMS. Navigate to a directory where you'd like to place your Keystone.js CMS deployment, and run the following `yeoman` command:
 
 ```
 yo keystone
@@ -80,20 +77,25 @@ This will walk you through a few questions about which components you'd like to 
 
 For this example, the blog and gallery will be created, using Handlebars and the default photo-hosting settings:
 
-```
-TODO: capture prompts+responses
-```
+![prompts](./images/keystone-generator-screencap.png)
 
-As soon as all questions are answered, `yeoman`, using the instructions from `generator-keystone`, creates your new Keystone.js CMS.
+As soon as all questions are answered, `yeoman`, using the instructions from `generator-keystone`, creates your new Keystone.js CMS. upon successful generation, you'll see instructions for running your new CMS:
+
+![finished](./images/generator-finished.png)
 
 ## Fixing the gallery
 
 If you choose to include a gallery, you'll need to fix a small bug related to gallery sorting. Keystone specifies an incorrect property to sort the gallery by.
 
-With VS Code (or any other editor), open **TODO: FILENAME** and change the following:
+With VS Code (or any other editor), open `routes/views/gallery.js` and change the following:
 
+```js
+view.query('galleries', keystone.list('Gallery').model.find().sort('sortOrder'));
 ```
-TODO: code fix for sort order
+
+To:
+```js
+view.query('galleries', keystone.list('Gallery').model.find().sort('-publishedDate'));
 ```
 
 ### Pointing Keystone.js to Cosmos DB emulator
@@ -101,13 +103,15 @@ TODO: code fix for sort order
 The Cosmos DB emulator listens on port 10250 and 10255, and has a fixed username and password. The connection string looks like this:
 
 ```
-TODO: Connection string
+mongodb://localhost:C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==@localhost:10255/admin?ssl=true&3t.sslSelfSignedCerts=true
 ```
 
-In the **TODO: CONFIG FILE** file, add the connection string:
+In the `.env` file, located in your newly-created Keystone.js directory, add the connection string, by adding the `MONGO_URI` parameter:
 
 ```
-TODO: MONGODB connection string in config file
+COOKIE_SECRET=...
+CLOUDINARY_URL=...
+MONGO_URI=mongodb://localhost:C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==@localhost:10255/admin?ssl=true&3t.sslSelfSignedCerts=true
 ```
  
  ### Test Keystone.js locally
