@@ -43,11 +43,8 @@ This quickstart uses git integration when publishing to Azure. If you'll only be
 <a id="create-keystone"></a>
 ## Create a Keystone.js instance
 
-TODO:
 
- - Modify gallery (fix sort bug)
- - Point MongoDB connection to Cosmos DB emulator
- 
+
  ### Install keystone.js generator
 
  When creating a Keystone.js CMS, you get to choose which components will be included (blog, gallery, contact form), what templating style to use (Handlebars, etc.), and a photo-hosting account. A separate project, `generator-keystone`, contains the instructions for creating your customized Keystone CMS.
@@ -124,56 +121,61 @@ MONGO_URI=mongodb://localhost:C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuV
 
  At this point, you should be able to browse to `https://localhost:3000` and navigate your new Keystone.js CMS.
 
+ Note: By default, keystone.js does not add a publish date to blog posts. Be sure to add a date for each blog post. Otherwise, when using Cosmos DB (whether the emulator or cloud-based database service), you won't see any posts listed that don't have a publish date.
+
+ ![set publish date](./images/publish-date.png)
+
  ## Deploy your CMS to Azure
  
  To deploy your new Keystone CMS to Azure, you'll create an Azure Web App, along with git integration.
 
- <a id="create-account"></a>
+ Note: To simplify viewing all of your Azure resources in one place, choose the same Resource Group name for your Cosmos DB database and your Web App.
+
 ### Create a database account
 
-TODO
+[!INCLUDE [cosmos-db-create-dbaccount](../../includes/cosmos-db-create-dbaccount-mongodb.md)]
+
 
 ### Create an Azure Web App with Git integration
+To deploy your Keystone CMS, you can create a new web app in Azure and enable continuous deployment with git. Please follow [this tutorial](https://docs.microsoft.com/en-us/azure/app-service/app-service-continuous-deployment) to set up continuous deployment with Github in Azure. For this quickstart, choose `Local Git Repository`:
+
+![local git repository](./images/localgit.png)
 
 ### Configure git within your local Keystone folder
 
-From the Azure portal, navigate to **TODO: Configuration tab**, and copy the git path. Then, run the following command from your keystone.js cms directory:
+From the Azure portal, navigate to your web app's Overview and copy the git url. Then, run the following command from your keystone.js cms directory:
 
 ```
-TODO: ADD GIT REMOTE
+git init
+git remote add azure https://<your-git-url>.git
 ```
-### Create Cosmos DB database with MongoDB API
 
 ### Configure keystone to use Cosmos DB databse in Azure
-From the portal, copy your database connection string, username, and password into three configuration properties in your Web App:
+From the portal, navigate to your Cosmos DB database. Navigate to the Connection String settings, and copy your connection string.
 
-**TODO: Screenshot of portal with app settings**
+Now navigate to the App Settings for your newly-created Web App. Add a `MONGO_URI` setting, with the connection string you copied from your Cosmos DB database.
 
-Remove the connection string from the keystone configuration file:
+Also, add your `CLOUDINARY_URL` and `COOKIE_SECRET` settings, which you'll copy from your keystone.js CMS `.env` file:
 
-**TODO: Screenshot of removed configuration settings**
+![app settings](./images/app-settings.png)
 
 ### Deploy code to Azure
 
-Now that your local folder is configured correctly, add the Keystone content:
+Now that your local folder is configured correctly, add the Keystone content to git, and push it to Azure:
 
 ```
 git add .
 git commit -m "Add keystone.js cms"
-git push
+git push azure master
 ```
 
-At this point, your keystone.js cms code will be pushed to your Web App. You can monitor its status on the **TODO: Page name** tab:
+At this point, your keystone.js cms code will be pushed to your Web App. You can monitor its status on the Deployment Options tab:
 
-**TODO: screenshot of deployment in progress**
+![deploying via git](./images/git-deploy.png)
 
-When the deployment is complete, open a browser to view your web app, at `https://<yourwebapp>.azurewebsites.net`. You should see the keystone welcome page:
+When the deployment is complete, open a browser to view your web app, at `https://<yourwebapp>.azurewebsites.net`. You should see the keystone.js welcome page.
 
-**TODO: screenshot of keystone running in Azure**
-
-Login, and create a simple blog post. Then, navigate to the Cosmos DB databsae you set up earlier, and navigate to the query explorer. Here, you can query your blog collection and find your new blog post:
-
-**TODO: screenshot of blog post in query explorer**
+At this point, your keystone.js CMS is up and running, storing its content in Cosmos DB!
 
 ## Clean up resources
 
